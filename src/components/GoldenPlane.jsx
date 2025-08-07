@@ -1,23 +1,18 @@
 import { useRef, useContext } from 'react'
-import { useFrame, useThree } from '@react-three/fiber'
+import { useFrame } from '@react-three/fiber'
 import { useResponsiveCamera } from '../hooks/useResponsiveCamera'
 import { SceneContext } from '../context/SceneContext'
-
-const PLANE_RATIO = 1.6
+import { PLANE_CONFIG } from '../config/planeConfig'
+import { MaterialFactory } from '../factories/MaterialFactory'
 
 export function GoldenPlane() {
   const planeRef = useRef()
   const { planeColor, rotation, scale } = useContext(SceneContext)
   
-  // Hook to handle responsive camera positioning
   useResponsiveCamera(planeRef)
   
-  // Fixed plane dimensions (camera will adjust to frame it properly)
-  const baseWidth = 8
-  const planeWidth = baseWidth
-  const planeHeight = planeWidth / PLANE_RATIO
+  const materialProps = MaterialFactory.createPlaneMaterial();
   
-  // Animation loop for any continuous updates
   useFrame((state, delta) => {
     if (planeRef.current) {
       // Plane never rotates or scales - it's always the same size and orientation
@@ -26,12 +21,9 @@ export function GoldenPlane() {
   })
   
   return (
-    <mesh ref={planeRef}>
-      <planeGeometry args={[planeWidth, planeHeight]} />
-      <meshBasicMaterial 
-        color="#000000" // Black background for grid lines
-        side={2} // DoubleSide
-      />
+    <mesh ref={planeRef} position={[0, 0, PLANE_CONFIG.layers.plane]}>
+      <planeGeometry args={[PLANE_CONFIG.baseWidth, PLANE_CONFIG.planeHeight]} />
+      <meshBasicMaterial {...materialProps} />
     </mesh>
   )
 }

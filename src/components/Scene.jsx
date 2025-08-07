@@ -1,8 +1,6 @@
 import { useContext } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { GoldenPlane } from './GoldenPlane'
-import { GridOverlay } from './GridOverlay'
-import { GoldenBorder } from './GoldenBorder'
+import { PlaneComposite } from './PlaneComposite'
 import { SceneContext } from '../context/SceneContext'
 
 export function Scene() {
@@ -22,9 +20,7 @@ export function Scene() {
     >
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} />
-      <GoldenBorder />
-      <GoldenPlane />
-      <GridOverlay />
+      <PlaneComposite />
     </Canvas>
   )
 }

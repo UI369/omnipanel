@@ -1,9 +1,8 @@
 import { useMemo, useContext, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { SceneContext } from '../context/SceneContext'
-
-const PLANE_RATIO = 1.6
-const VERTICAL_TILES = 10
+import { PLANE_CONFIG } from '../config/planeConfig'
+import { MaterialFactory } from '../factories/MaterialFactory'
 
 function ClickableTile({ tile }) {
   const { clickedTiles, toggleTile } = useContext(SceneContext)
@@ -13,13 +12,12 @@ function ClickableTile({ tile }) {
   // Animate levitation
   useFrame((state, delta) => {
     if (meshRef.current) {
-      const targetZ = isClicked ? 0.05 : 0 // Levitate 0.05 units when clicked
+      const targetZ = isClicked ? 0.05 : 0
       meshRef.current.position.z += (targetZ - meshRef.current.position.z) * delta * 5
     }
   })
   
-  // Determine color based on click state
-  const displayColor = isClicked ? '#ffd700' : tile.color // Gold when clicked, original when not
+  const materialProps = MaterialFactory.createClickableTileMaterial(tile.color, isClicked);
   
   return (
     <mesh 
@@ -37,59 +35,39 @@ function ClickableTile({ tile }) {
       }}
     >
       <planeGeometry args={[tile.size * 0.95, tile.size * 0.95]} />
-      <meshBasicMaterial 
-        color={displayColor}
-        transparent 
-        opacity={0.8}
-        side={2}
-      />
+      <meshBasicMaterial {...materialProps} />
     </mesh>
   )
 }
 
 export function GridOverlay() {
   const gridData = useMemo(() => {
-    // Plane dimensions (same as GoldenPlane)
-    const planeWidth = 8
-    const planeHeight = planeWidth / PLANE_RATIO
-    
-    // Calculate tile size based on height divided by 10
-    const tileSize = planeHeight / VERTICAL_TILES
-    
-    // Calculate how many tiles fit horizontally (should be exactly 16)
-    const horizontalTiles = Math.floor(planeWidth / tileSize)
-    
-    // Calculate leftover space to center the grid
-    const totalGridWidth = horizontalTiles * tileSize
-    const leftoverSpace = planeWidth - totalGridWidth
-    const offsetX = leftoverSpace / 2
-    
     // Generate grid positions
     const tiles = []
-    for (let row = 0; row < VERTICAL_TILES; row++) {
-      for (let col = 0; col < horizontalTiles; col++) {
-        const x = (col * tileSize) - (planeWidth / 2) + (tileSize / 2) + offsetX
-        const y = (row * tileSize) - (planeHeight / 2) + (tileSize / 2)
+    for (let row = 0; row < PLANE_CONFIG.verticalTiles; row++) {
+      for (let col = 0; col < PLANE_CONFIG.horizontalTiles; col++) {
+        const x = (col * PLANE_CONFIG.tileSize) - (PLANE_CONFIG.baseWidth / 2) + (PLANE_CONFIG.tileSize / 2) + PLANE_CONFIG.gridOffsetX
+        const y = (row * PLANE_CONFIG.tileSize) - (PLANE_CONFIG.planeHeight / 2) + (PLANE_CONFIG.tileSize / 2)
         
         // Create checkerboard pattern (red/green alternating)
         const isEven = (row + col) % 2 === 0
-        const color = isEven ? '#8b0000' : '#006400' // Dark red : Dark green
+        const color = isEven ? '#8b0000' : '#006400'
         
         tiles.push({
           id: `${row}-${col}`,
           x,
           y,
-          size: tileSize,
+          size: PLANE_CONFIG.tileSize,
           color
         })
       }
     }
     
-    return { tiles, tileSize }
+    return { tiles }
   }, [])
   
   return (
-    <group position={[0, 0, 0.001]}> {/* Slightly in front of plane */}
+    <group position={[0, 0, PLANE_CONFIG.layers.grid]}>
       {gridData.tiles.map((tile) => (
         <ClickableTile key={tile.id} tile={tile} />
       ))}
