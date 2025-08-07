@@ -13,10 +13,12 @@ export function GoldenBorder() {
   return (
     <mesh position={[0, 0, -0.002]}> {/* Slightly behind main plane */}
       <planeGeometry args={[borderPlaneWidth, borderPlaneHeight]} />
-      <meshBasicMaterial 
-        color="#ffd700" // Golden color
+      <meshStandardMaterial 
+        color="#c0c0c0" // Metallic silver
+        metalness={0.9} // Very metallic
+        roughness={0.1} // Very smooth/shiny
         transparent 
-        opacity={0.8}
+        opacity={0.95}
         side={2}
       />
     </mesh>

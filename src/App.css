@@ -99,7 +99,7 @@ body {
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
 }
 
-.reset-btn {
+.camera-toggle-btn, .reset-btn {
   background: #475569;
   color: white;
   border: none;
@@ -108,10 +108,19 @@ body {
   cursor: pointer;
   font-weight: 500;
   transition: background-color 0.2s;
+  margin-right: 0.5rem;
 }
 
-.reset-btn:hover {
+.camera-toggle-btn:hover, .reset-btn:hover {
   background: #64748b;
+}
+
+.camera-toggle-btn.active {
+  background: #4f46e5;
+}
+
+.camera-toggle-btn.active:hover {
+  background: #4338ca;
 }
 
 /* Bottom HUD */

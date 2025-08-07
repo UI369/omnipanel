@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { SceneContext } from '../../context/SceneContext'
 
 export function TopHUD() {
-  const { planeColor, changePlaneColor, resetPlane } = useContext(SceneContext)
+  const { planeColor, changePlaneColor, resetPlane, isOrthographic, toggleCameraType } = useContext(SceneContext)
   
   const colors = [
     { name: 'Blue', value: '#4f46e5' },
@@ -30,6 +30,12 @@ export function TopHUD() {
             ))}
           </div>
         </div>
+        <button 
+          className={`camera-toggle-btn ${isOrthographic ? 'active' : ''}`}
+          onClick={toggleCameraType}
+        >
+          {isOrthographic ? 'Orthographic' : 'Perspective'}
+        </button>
         <button className="reset-btn" onClick={resetPlane}>
           Reset
         </button>

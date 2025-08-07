@@ -29,10 +29,8 @@ export function GoldenPlane() {
     <mesh ref={planeRef}>
       <planeGeometry args={[planeWidth, planeHeight]} />
       <meshBasicMaterial 
-        color={planeColor} 
+        color="#000000" // Black background for grid lines
         side={2} // DoubleSide
-        transparent 
-        opacity={0.8}
       />
     </mesh>
   )
