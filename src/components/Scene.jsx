@@ -1,17 +1,23 @@
+import { useContext } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { GoldenPlane } from './GoldenPlane'
 import { GridOverlay } from './GridOverlay'
 import { GoldenBorder } from './GoldenBorder'
+import { SceneContext } from '../context/SceneContext'
 
 export function Scene() {
+  const { isOrthographic } = useContext(SceneContext)
+  
   return (
     <Canvas
-      camera={{ 
+      key={isOrthographic ? 'ortho' : 'persp'}
+      orthographic={isOrthographic}
+      camera={{
         position: [0, 0, 5],
         fov: 75
       }}
       style={{ 
-        pointerEvents: 'none' // Let HUD capture events
+        pointerEvents: 'auto'
       }}
     >
       <ambientLight intensity={0.5} />
