@@ -16,7 +16,7 @@ export class CameraUtils {
     const fovRadians = fov * (Math.PI / 180);
     const halfFov = fovRadians / 2;
     
-    const SCREEN_WIDTH_PERCENTAGE = 0.9;
+    const SCREEN_FILL_PERCENTAGE = 0.9;
     const baseWidth = 8;
     const planeWidth = baseWidth;
     const planeHeight = planeWidth / 1.6;
@@ -24,19 +24,19 @@ export class CameraUtils {
     const totalWidth = planeWidth + borderWidth * 2;
     const totalHeight = planeHeight + borderWidth * 2;
     
-    const desiredWidthInView = totalWidth / SCREEN_WIDTH_PERCENTAGE;
-    const distanceForWidth = desiredWidthInView / 2 / Math.tan(halfFov) / aspect;
-    const viewableHeightAtDistance = 2 * Math.tan(halfFov) * distanceForWidth;
+    // Calculate distance needed to fit width
+    const desiredWidthInView = totalWidth / SCREEN_FILL_PERCENTAGE;
+    const distanceForWidth = desiredWidthInView / (2 * Math.tan(halfFov) * aspect);
     
-    const maxPlaneHeightRatio = 0.9;
-    const requiredViewHeight = totalHeight / maxPlaneHeightRatio;
+    // Calculate distance needed to fit height  
+    const desiredHeightInView = totalHeight / SCREEN_FILL_PERCENTAGE;
+    const distanceForHeight = desiredHeightInView / (2 * Math.tan(halfFov));
     
-    let finalDistance;
-    if (viewableHeightAtDistance >= requiredViewHeight) {
-      finalDistance = distanceForWidth;
-    } else {
-      finalDistance = requiredViewHeight / (2 * Math.tan(halfFov));
-    }
+    // For narrow containers (aspect < totalWidth/totalHeight), use width constraint
+    // For wide containers (aspect > totalWidth/totalHeight), use height constraint
+    const planeAspect = totalWidth / totalHeight; // ~1.52 for our 8.8x5.8 plane
+    const finalDistance = aspect < planeAspect ? distanceForWidth : distanceForHeight;
+    
     
     return {
       finalDistance,
